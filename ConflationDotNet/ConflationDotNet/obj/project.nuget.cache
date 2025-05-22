@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "f8JaaGXOmDE=",
+  "success": true,
+  "projectFilePath": "C:\\GitHubConflation\\Conflation\\ConflationDotNet\\ConflationDotNet\\ConflationDotNet.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\mruda\\.nuget\\packages\\system.reactive\\6.0.1\\system.reactive.6.0.1.nupkg.sha512"
+  ],
+  "logs": []
+}
