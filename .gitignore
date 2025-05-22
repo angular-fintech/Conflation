@@ -1,0 +1,35 @@
+# Rider project files
+.idea/
+*.sln.iml
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results
+bin/
+obj/
+out/
+
+# NuGet packages
+*.nupkg
+*.snupkg
+packages/
+# Uncomment if using package restore
+# !packages/build/
+
+# Rider caches
+.idea/
+*.DotSettings.user
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Visual Studio Code workspace
+.vscode/
