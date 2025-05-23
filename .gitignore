@@ -33,3 +33,5 @@ Thumbs.db
 
 # Visual Studio Code workspace
 .vscode/
+
+.mvn/
