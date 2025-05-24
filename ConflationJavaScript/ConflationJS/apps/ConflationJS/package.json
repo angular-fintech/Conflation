@@ -1,0 +1,66 @@
+{
+  "name": "@conflation-js/ConflationJS",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "targets": {
+      "build": {
+        "executor": "@nx/esbuild:esbuild",
+        "outputs": [
+          "{options.outputPath}"
+        ],
+        "defaultConfiguration": "production",
+        "options": {
+          "platform": "node",
+          "outputPath": "apps/ConflationJS/dist",
+          "format": [
+            "cjs"
+          ],
+          "bundle": false,
+          "main": "apps/ConflationJS/src/main.ts",
+          "tsConfig": "apps/ConflationJS/tsconfig.app.json",
+          "assets": [
+            "apps/ConflationJS/src/assets"
+          ],
+          "esbuildOptions": {
+            "sourcemap": true,
+            "outExtension": {
+              ".js": ".js"
+            }
+          }
+        },
+        "configurations": {
+          "development": {},
+          "production": {
+            "esbuildOptions": {
+              "sourcemap": false,
+              "outExtension": {
+                ".js": ".js"
+              }
+            }
+          }
+        }
+      },
+      "serve": {
+        "continuous": true,
+        "executor": "@nx/js:node",
+        "defaultConfiguration": "development",
+        "dependsOn": [
+          "build"
+        ],
+        "options": {
+          "buildTarget": "@conflation-js/ConflationJS:build",
+          "runBuildTargetDependencies": false
+        },
+        "configurations": {
+          "development": {
+            "buildTarget": "@conflation-js/ConflationJS:build:development"
+          },
+          "production": {
+            "buildTarget": "@conflation-js/ConflationJS:build:production"
+          }
+        }
+      }
+    }
+  }
+}

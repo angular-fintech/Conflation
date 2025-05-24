@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ConflationDotNet")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+dba8c7f19534512437155648fd120c9c6ed2c053")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+87c464b7052169a9a1296d77147d2e0b13ad88ff")]
 [assembly: System.Reflection.AssemblyProductAttribute("ConflationDotNet")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ConflationDotNet")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
