@@ -7,11 +7,30 @@
 *.user
 *.userosscache
 *.sln.docstates
+# Ignore all DLL and EXE files
+**/*.dll
+**/*.exe
+
+ConflationDotNet/ConflationDotNet/bin/**
 
 # Build results
+ConflationDotNet/bin/**
+ConflationDotNet/obj/**
 bin/
 obj/
 out/
+
+# Visual Studio 2019
+.vs/
+# Visual Studio 2022
+.vs/
+# Visual Studio 2022 (newer)
+.vs/
+# Visual Studio 2022 (newer)
+
+# Rider
+.idea/
+
 
 # NuGet packages
 *.nupkg
