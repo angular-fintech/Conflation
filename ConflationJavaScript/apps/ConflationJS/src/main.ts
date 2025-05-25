@@ -1,5 +1,11 @@
 import {interval, Observable, Subject} from 'rxjs';
 
+/**
+ * Conflates values by key over a specified interval.
+ * @param source$ - The source observable emitting objects with a key and value.
+ * @param intervalMs - The interval in milliseconds to emit conflated values.
+ * @returns An observable that emits conflated values by key.
+ */
 
 function conflateByKey(source$: Observable<{ key: string, value: any }>, intervalMs: number) {
   return new Observable(observer => {
