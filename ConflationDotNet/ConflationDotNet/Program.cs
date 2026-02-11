@@ -29,7 +29,7 @@ public static class Program
             subject.OnNext(pair);
         });
         
-        var inputStream2 = Observable.Interval(TimeSpan.FromMilliseconds(100))
+        var inputStream2 = Observable.Interval(TimeSpan.FromMilliseconds(200))
             .Select((l) =>
             {
                 var data = new KeyValuePair<string, long>(
