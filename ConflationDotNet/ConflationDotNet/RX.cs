@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Reactive.Linq;
+using Tangosol.Net.Cache;
 
 namespace ConflationDotNet;
 
@@ -142,6 +143,108 @@ public static class RxExtensions
                }
                // Dispose outside gate to avoid lock-ordering issues
                // with scheduler internals.
+               subscription.Dispose();
+               timer.Dispose();
+            };
+         });
+   }
+
+   /// <summary>
+   /// Conflates a stream of Coherence <see cref="CacheEventArgs"/> by
+   /// <see cref="CacheEventArgs.Key"/> over fixed time intervals.
+   /// Within each interval only the latest event per key is retained.
+   /// When the interval elapses the accumulated snapshot is emitted downstream.
+   /// </summary>
+   /// <remarks>
+   /// <para><b>Thread safety:</b> Producers (OnNext) write lock-free to a
+   /// <see cref="ConcurrentDictionary{TKey,TValue}"/>.  The periodic drain
+   /// and all terminal notifications are serialised by a monitor gate,
+   /// satisfying the Rx serialisation contract without ever contending with
+   /// producers on the hot path.</para>
+   /// <para><b>Memory:</b> Two dictionaries are pre-allocated and reused for
+   /// the lifetime of the subscription — zero allocations during steady-state
+   /// operation.</para>
+   /// </remarks>
+   public static IObservable<CacheEventArgs> ConflateByKey(
+      this IObservable<CacheEventArgs> source,
+      TimeSpan interval)
+   {
+      return Observable.Create<CacheEventArgs>(
+         observer =>
+         {
+            var buffers = new[]
+            {
+               new ConcurrentDictionary<object, CacheEventArgs>(),
+               new ConcurrentDictionary<object, CacheEventArgs>()
+            };
+            var activeIndex = 0;
+
+            var gate = new object();
+            var stopped = false;
+
+            var subscription = source.Subscribe(
+               onNext: e =>
+               {
+                  buffers[Volatile.Read(ref activeIndex)][e.Key] = e;
+               },
+               onError: error =>
+               {
+                  lock (gate)
+                  {
+                     if (stopped) return;
+                     stopped = true;
+                  }
+                  observer.OnError(error);
+               },
+               onCompleted: () =>
+               {
+                  lock (gate)
+                  {
+                     if (stopped) return;
+                     stopped = true;
+
+                     var drainIdx = activeIndex;
+                     Volatile.Write(ref activeIndex, 1 - drainIdx);
+
+                     var buf = buffers[drainIdx];
+                     if (!buf.IsEmpty)
+                     {
+                        foreach (var entry in buf)
+                           observer.OnNext(entry.Value);
+                        buf.Clear();
+                     }
+                  }
+                  observer.OnCompleted();
+               });
+
+            var timer = Observable.Interval(interval).Subscribe(_ =>
+            {
+               lock (gate)
+               {
+                  if (stopped) return;
+
+                  var drainIdx = activeIndex;
+                  Volatile.Write(ref activeIndex, 1 - drainIdx);
+
+                  var buf = buffers[drainIdx];
+                  if (buf.IsEmpty) return;
+
+                  foreach (var entry in buf)
+                  {
+                     if (stopped) break;
+                     observer.OnNext(entry.Value);
+                  }
+
+                  buf.Clear();
+               }
+            });
+
+            return () =>
+            {
+               lock (gate)
+               {
+                  stopped = true;
+               }
                subscription.Dispose();
                timer.Dispose();
             };
