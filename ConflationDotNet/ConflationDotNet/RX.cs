@@ -26,6 +26,9 @@ public static class RxExtensions
       TimeSpan interval)
       where TKey : notnull
    {
+      if (interval <= TimeSpan.Zero)
+         throw new ArgumentOutOfRangeException(nameof(interval), interval, "Interval must be greater than zero.");
+
       return Observable.Create<KeyValuePair<TKey, TValue>>(
          observer =>
          {
@@ -169,6 +172,9 @@ public static class RxExtensions
       this IObservable<CacheEventArgs> source,
       TimeSpan interval)
    {
+      if (interval <= TimeSpan.Zero)
+         throw new ArgumentOutOfRangeException(nameof(interval), interval, "Interval must be greater than zero.");
+
       return Observable.Create<CacheEventArgs>(
          observer =>
          {
